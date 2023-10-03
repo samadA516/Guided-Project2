@@ -24,14 +24,22 @@ app.get("/api/characters", async (req, res) => {
     client.close();
 });
 
-app.get("/api/films", (req, res) => {
-    console.log("Sending fake test object");
-    res.send({fakeKey: 'FakeData'});
+app.get("/api/films", async (req, res) => {
+    const collection = await mongoConnect('films');
+    const films = await collection.find({}).toArray();
+
+    console.log("Sending films: ", films);
+    res.send({"films": films});
+    client.close();
 });
 
-app.get("/api/planets", (req, res) => {
-    console.log("Sending fake test object");
-    res.send({fakeKey: 'FakeData'});
+app.get("/api/planets", async (req, res) => {
+    const collection = await mongoConnect('planets');
+    const planets = await collection.find({}).toArray();
+
+    console.log("Sending planets: ", planets);
+    res.send({"planets": planets});
+    client.close();
 });
 
 app.get("/api/characters/:id", async (req, res) => {
@@ -43,37 +51,45 @@ app.get("/api/characters/:id", async (req, res) => {
     client.close();
 });
 
-app.get("/api/films/:id", (req, res) => {
+app.get("/api/films/:id", async (req, res) => {
+    const collection = await mongoConnect('films');
+    const film = await collection.findOne({ id: +req.params.id });
+
+    console.log("Sending film: ", film);
+    res.send(film);
+    client.close();
+});
+
+app.get("/api/planets/:id", async (req, res) => {
+    const collection = await mongoConnect('planets');
+    const planet = await collection.findOne({ id: +req.params.id });
+
+    console.log("Sending planet: ", planet);
+    res.send(planet);
+    client.close();
+});
+
+app.get("/api/films/:id/characters", async (req, res) => {
     console.log("Sending fake test object");
     res.send({fakeKey: 'FakeData'});
 });
 
-app.get("/api/planets/:id", (req, res) => {
+app.get("/api/films/:id/planets", async (req, res) => {
     console.log("Sending fake test object");
     res.send({fakeKey: 'FakeData'});
 });
 
-app.get("/api/films/:id/characters", (req, res) => {
+app.get("/api/characters/:id/films", async (req, res) => {
     console.log("Sending fake test object");
     res.send({fakeKey: 'FakeData'});
 });
 
-app.get("/api/films/:id/planets", (req, res) => {
+app.get("/api/planets/:id/films", async (req, res) => {
     console.log("Sending fake test object");
     res.send({fakeKey: 'FakeData'});
 });
 
-app.get("/api/characters/:id/films", (req, res) => {
-    console.log("Sending fake test object");
-    res.send({fakeKey: 'FakeData'});
-});
-
-app.get("/api/planets/:id/films", (req, res) => {
-    console.log("Sending fake test object");
-    res.send({fakeKey: 'FakeData'});
-});
-
-app.get("/api/planets/:id/characters", (req, res) => {
+app.get("/api/planets/:id/characters", async (req, res) => {
     console.log("Sending fake test object");
     res.send({fakeKey: 'FakeData'});
 });
