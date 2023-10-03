@@ -1,6 +1,7 @@
 const { MongoClient } = require('mongodb');
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors')
 
 var url = "mongodb://localhost:27017";
 const client = new MongoClient(url);
@@ -8,6 +9,7 @@ const dbName = "swapi";
 
 var app = express();
 app.use(bodyParser.json());
+app.use(cors());
 
 async function mongoConnect(collectionName) {
     await client.connect();
@@ -79,6 +81,6 @@ app.get("/api/planets/:id/characters", (req, res) => {
 });
 
 // start the rest service
-var port = 3000;
+var port = 4000;
 console.log('service opening on port: ' + port)
 app.listen(port);
