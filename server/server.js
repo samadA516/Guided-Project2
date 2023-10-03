@@ -9,15 +9,19 @@ const dbName = "swapi";
 var app = express();
 app.use(bodyParser.json());
 
-app.get("/api/characters", async (req, res) => {
+async function mongoConnect(collectionName) {
     await client.connect();
     const db = client.db(dbName);
-    const collection = db.collection('characters');
+    return db.collection(collectionName);
+}
 
+app.get("/api/characters", async (req, res) => {
+    const collection = await mongoConnect('characters');
     const characters = await collection.find({}).toArray();
 
     console.log("Sending characters: ", characters);
     res.send({"characters": characters});
+    client.close();
 });
 
 app.get("/api/films", (req, res) => {
@@ -30,9 +34,13 @@ app.get("/api/planets", (req, res) => {
     res.send({fakeKey: 'FakeData'});
 });
 
-app.get("/api/characters/:id", (req, res) => {
-    console.log("Sending fake test object");
-    res.send({fakeKey: 'FakeData'});
+app.get("/api/characters/:id", async (req, res) => {
+    const collection = await mongoConnect('characters');
+    const character = await collection.findOne({ id: +req.params.id });
+
+    console.log("Sending character: ", character);
+    res.send(character);
+    client.close();
 });
 
 app.get("/api/films/:id", (req, res) => {
